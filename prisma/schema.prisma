@@ -1,0 +1,51 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int        @id @default(autoincrement())   
+  username     String     @unique                       
+  email        String     @unique                        
+  password     String     
+  createdAt    DateTime   @default(now())                
+  updatedAt    DateTime   @updatedAt                      
+  factures     Facture[]  
+}
+
+model Facture {
+  id            Int            @id @default(autoincrement()) 
+  devisNumero   String        
+  nomClient     String         
+  ville         String         
+  rue           String        
+  pays          String         
+  numeroRue     Int            
+  sireClientPro String?        
+  createdAt     DateTime       @default(now())               
+  updatedAt     DateTime       @updatedAt                    
+  
+  lignes        LigneFacture[] 
+
+  userId        Int            
+  user          User           @relation(fields: [userId], references: [id]) 
+}
+
+
+
+
+model LigneFacture {
+  id            Int     @id @default(autoincrement())    
+  intitule      String  
+  nombre        Int     
+  montantUnit   Float   
+  montantTotal  Float   
+
+  factureId     Int     
+  facture       Facture @relation(fields: [factureId], references: [id]) 
+}
