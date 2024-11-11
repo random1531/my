@@ -1,24 +1,16 @@
-const express = require('express');
-const session = require('express-session');
-const passport = require('passport');
-require('dotenv').config();
-require('./middleware/passportConfig'); // Importe la configuration de passport
+const express = require("express");
+const cors = require("cors");
+const userRoutes = require("./routes/user.routes");
+require("dotenv").config();
+require("./middleware/passportConfig"); 
 
-const app = express();
+const app = express(); 
 
-// Configurer les sessions
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true
-}));
+app.use(cors());
+app.use(express.json());
 
-// Initialiser passport et la session
-app.use(passport.initialize());
-app.use(passport.session());
+app.use("/api/user", userRoutes); 
 
 app.listen(process.env.PORT, () => {
-    console.log(`Serveur démarré sur le port ${process.env.PORT}`);
+  console.log(`Serveur démarré sur le port ${process.env.PORT}`);
 });
-
-
