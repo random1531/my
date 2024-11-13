@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 module.exports.register = async (req, res) => {
-    const { username, email, password, accountType, name, prenom, siret, adresse, ville, pays } = req.body;
+    const { username, email, password} = req.body;
     try {
         const existingUser = await prisma.user.findUnique({
             where: { email }
@@ -20,13 +20,7 @@ module.exports.register = async (req, res) => {
                 username,
                 email,
                 password: hashedPassword,
-                accountType,
-                name,
-                prenom,
-                siret,
-                adresse,
-                ville,
-                pays,
+                
             },
         });
         res.status(201).send(newUser);

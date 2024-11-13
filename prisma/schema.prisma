@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(uuid())
   username    String    @unique
   email       String    @unique
   password    String
@@ -19,13 +19,14 @@ model User {
   adresse     String?
   ville       String?
   pays        String?  
+  countmonth  Int       @default(0)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   factures    Facture[]
 }
 
 model Facture {
-  id            Int      @id @default(autoincrement())
+  id            String     @id @default(uuid())
   statut        String
   devisNumero   String
   nomClient     String
@@ -34,22 +35,27 @@ model Facture {
   pays          String
   numeroRue     Int
   sireClientPro String?
+  dateDevis     DateTime
+  dateEcheance  DateTime
+  montantHT     Float
+  montantTTC    Float
+  montantTVA    Float
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   lignes LigneFacture[]
 
-  userId Int
+  userId String
   user   User @relation(fields: [userId], references: [id])
 }
 
 model LigneFacture {
-  id           Int    @id @default(autoincrement())
+  id           String    @id @default(uuid())
   intitule     String
   nombre       Int
   montantUnit  Float
   montantTotal Float
 
-  factureId Int
+  factureId String
   facture   Facture @relation(fields: [factureId], references: [id])
 }
