@@ -8,25 +8,36 @@ datasource db {
 }
 
 model User {
-  id          String    @id @default(uuid())
-  username    String    @unique
-  email       String    @unique
+  id          String   @id @default(uuid())
+  username    String   @unique
+  email       String   @unique
   password    String
-  accountType String    @default("user")
+  accountType String   @default("user")
   name        String?
-  prenom      String?
-  siret       String?
+  prenom      String?  
   adresse     String?
   ville       String?
-  pays        String?  
-  countmonth  Int       @default(0)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  factures    Facture[]
+  pays        String?
+  countmonth  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model MicroEntreprise {
+  id         String    @id @default(uuid())
+  siret      String    @unique
+  nom        String
+  adresse    String
+  ville      String
+  pays       String
+  codePostal String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  factures   Facture[]
 }
 
 model Facture {
-  id            String     @id @default(uuid())
+  id            String          @id @default(uuid())
   statut        String
   devisNumero   String
   nomClient     String
@@ -40,22 +51,20 @@ model Facture {
   montantHT     Float
   montantTTC    Float
   montantTVA    Float
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  lignes LigneFacture[]
-
-  userId String
-  user   User @relation(fields: [userId], references: [id])
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  lignes        LigneFacture[]
+  userId        String
+  entrepise     MicroEntreprise @relation(fields: [userId], references: [id])
 }
 
 model LigneFacture {
-  id           String    @id @default(uuid())
+  id           String  @id @default(uuid())
   intitule     String
   nombre       Int
   montantUnit  Float
   montantTotal Float
-
-  factureId String
-  facture   Facture @relation(fields: [factureId], references: [id])
+  tva          Float
+  factureId    String
+  facture      Facture @relation(fields: [factureId], references: [id])
 }
