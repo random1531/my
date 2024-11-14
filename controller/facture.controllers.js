@@ -1,8 +1,9 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
+// Créer une nouvelle facture
 module.exports.create = async (req, res) => {
-    const { statut, devisNumero, nomClient, ville, rue, pays, numeroRue, sireClientPro, userId, lignes } = req.body;
+    const { statut, devisNumero, nomClient, ville, rue, pays, numeroRue, sireClientPro, dateDevis, dateEcheance, montantHT, montantTTC, montantTVA, microEntrepriseId, lignes } = req.body;
     try {
         const facture = await prisma.facture.create({
             data: {
@@ -14,14 +15,19 @@ module.exports.create = async (req, res) => {
                 pays,
                 numeroRue,
                 sireClientPro,
-                user: { connect: { id: userId } },
+                dateDevis,
+                dateEcheance,
+                montantHT,
+                montantTTC,
+                montantTVA,
+                microEntreprise: { connect: { id: microEntrepriseId } },
                 lignes: {
                     create: lignes,
                 },
             },
             include: {
                 lignes: true,
-                user: true,
+                microEntreprise: true,
             },
         });
         res.status(201).send(facture);
@@ -30,12 +36,13 @@ module.exports.create = async (req, res) => {
     }
 };
 
+// Lire toutes les factures
 module.exports.read = async (req, res) => {
     try {
         const factures = await prisma.facture.findMany({
             include: {
                 lignes: true,
-                user: true,
+                microEntreprise: true,
             },
         });
         res.status(200).send(factures);
@@ -44,12 +51,34 @@ module.exports.read = async (req, res) => {
     }
 };
 
+// Lire une facture par ID
+module.exports.readById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const facture = await prisma.facture.findUnique({
+            where: { id },
+            include: {
+                lignes: true,
+                microEntreprise: true,
+            },
+        });
+        if (facture) {
+            res.status(200).send(facture);
+        } else {
+            res.status(404).send({ error: 'Facture non trouvée' });
+        }
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+};
+
+// Mettre à jour une facture
 module.exports.update = async (req, res) => {
     const { id } = req.params;
-    const { statut, devisNumero, nomClient, ville, rue, pays, numeroRue, sireClientPro, lignes } = req.body;
+    const { statut, devisNumero, nomClient, ville, rue, pays, numeroRue, sireClientPro, dateDevis, dateEcheance, montantHT, montantTTC, montantTVA, lignes } = req.body;
     try {
         const facture = await prisma.facture.update({
-            where: { id: parseInt(id) },
+            where: { id },
             data: {
                 statut,
                 devisNumero,
@@ -59,14 +88,19 @@ module.exports.update = async (req, res) => {
                 pays,
                 numeroRue,
                 sireClientPro,
+                dateDevis,
+                dateEcheance,
+                montantHT,
+                montantTTC,
+                montantTVA,
                 lignes: {
-                    deleteMany: {}, // Delete existing lines
-                    create: lignes, // Create new lines
+                    deleteMany: {}, // Supprimer les lignes existantes
+                    create: lignes, // Créer de nouvelles lignes
                 },
             },
             include: {
                 lignes: true,
-                user: true,
+                microEntreprise: true,
             },
         });
         res.status(200).send(facture);
@@ -75,14 +109,15 @@ module.exports.update = async (req, res) => {
     }
 };
 
+// Supprimer une facture
 module.exports.delete = async (req, res) => {
     const { id } = req.params;
     try {
         const facture = await prisma.facture.delete({
-            where: { id: parseInt(id) },
+            where: { id },
             include: {
                 lignes: true,
-                user: true,
+                microEntreprise: true,
             },
         });
         res.status(200).send(facture);

@@ -8,63 +8,66 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(uuid())
-  username    String   @unique
-  email       String   @unique
-  password    String
-  accountType String   @default("user")
-  name        String?
-  prenom      String?  
-  adresse     String?
-  ville       String?
-  pays        String?
-  countmonth  Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                String           @id @default(uuid())
+  username          String           @unique
+  email             String           @unique
+  password          String
+  accountType       String           @default("user")
+  name              String?
+  prenom            String?
+  adresse           String?
+  ville             String?
+  pays              String?
+  countmonth        Int              @default(0)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  microentrepriseId String?          // clé étrangère pour MicroEntreprise
+  microentreprise   MicroEntreprise? @relation(fields: [microentrepriseId], references: [id], name: "UserToMicroEntreprise")
 }
 
 model MicroEntreprise {
-  id         String    @id @default(uuid())
-  siret      String    @unique
+  id         String     @id @default(uuid())
+  siret      String     @unique
   nom        String
   adresse    String
   ville      String
   pays       String
   codePostal String
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  factures   Facture[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  users      User[]     @relation("UserToMicroEntreprise")
+  factures   Facture[]  // relation vers Facture
 }
 
 model Facture {
-  id            String          @id @default(uuid())
-  statut        String
-  devisNumero   String
-  nomClient     String
-  ville         String
-  rue           String
-  pays          String
-  numeroRue     Int
-  sireClientPro String?
-  dateDevis     DateTime
-  dateEcheance  DateTime
-  montantHT     Float
-  montantTTC    Float
-  montantTVA    Float
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  lignes        LigneFacture[]
-  userId        String
-  entrepise     MicroEntreprise @relation(fields: [userId], references: [id])
+  id                String           @id @default(uuid())
+  statut            String
+  devisNumero       String
+  nomClient         String
+  ville             String
+  rue               String
+  pays              String
+  numeroRue         Int
+  sireClientPro     String?
+  dateDevis         DateTime
+  dateEcheance      DateTime
+  montantHT         Float
+  montantTTC        Float
+  montantTVA        Float
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  lignes            LigneFacture[]   // relation vers LigneFacture
+  microEntrepriseId String           // clé étrangère pour MicroEntreprise
+  microEntreprise   MicroEntreprise  @relation(fields: [microEntrepriseId], references: [id])
 }
 
 model LigneFacture {
-  id           String  @id @default(uuid())
+  id           String    @id @default(uuid())
   intitule     String
   nombre       Int
   montantUnit  Float
   montantTotal Float
   tva          Float
   factureId    String
-  facture      Facture @relation(fields: [factureId], references: [id])
+  facture      Facture   @relation(fields: [factureId], references: [id])
 }
