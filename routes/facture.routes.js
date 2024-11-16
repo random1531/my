@@ -7,4 +7,6 @@ router.get("/read", verifyToken, FactureControllers.read);
 router.patch("/update/:id", verifyToken, FactureControllers.update);
 router.delete("/delete/:id", verifyToken, FactureControllers.delete);
 
-router.get("/read/:id", verifyToken, factureControllers.readById);
+router.get("/read/:id", verifyToken, FactureControllers.readById);
+
+module.exports = router;

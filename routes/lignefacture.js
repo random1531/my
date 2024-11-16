@@ -7,3 +7,6 @@ router.get('/read', verifyToken, LignefactureControllers.read);
 router.patch('/update/:id', verifyToken, LignefactureControllers.update);
 router.delete('/delete/:id', verifyToken, LignefactureControllers.delete);
 router.get('/read/:id', verifyToken, LignefactureControllers.readById);
+
+
+module.exports = router;

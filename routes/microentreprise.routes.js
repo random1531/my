@@ -7,3 +7,5 @@ router.patch("/update/:id", verifyToken, MicroentrepriseControllers.update);
 router.get("/all", verifyToken, MicroentrepriseControllers.getAll);
 router.get("/one/:id", verifyToken, MicroentrepriseControllers.getOne);
 router.delete("/delete/:id", verifyToken, MicroentrepriseControllers.delete);
+
+module.exports = router;

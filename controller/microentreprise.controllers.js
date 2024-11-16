@@ -2,8 +2,8 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 // Créer une nouvelle microentreprise
-module.exports.create = async (req, res) => {
-    const { siret, nom, adresse, ville, pays, codePostal } = req.body;
+module.exports.register = async (req, res) => {
+    const { siret, nom, adresse, ville, pays, codePostal, userIds } = req.body;
     try {
         const microEntreprise = await prisma.microEntreprise.create({
             data: {
@@ -13,6 +13,12 @@ module.exports.create = async (req, res) => {
                 ville,
                 pays,
                 codePostal,
+                users: {
+                    connect: userIds.map(id => ({ id })),
+                },
+            },
+            include: {
+                users: true,
             },
         });
         res.status(201).send(microEntreprise);
@@ -22,7 +28,7 @@ module.exports.create = async (req, res) => {
 };
 
 // Lire toutes les microentreprises
-module.exports.read = async (req, res) => {
+module.exports.getAll = async (req, res) => {
     try {
         const microEntreprises = await prisma.microEntreprise.findMany({
             include: {
@@ -37,7 +43,7 @@ module.exports.read = async (req, res) => {
 };
 
 // Lire une microentreprise par ID
-module.exports.readById = async (req, res) => {
+module.exports.getOne = async (req, res) => {
     const { id } = req.params;
     try {
         const microEntreprise = await prisma.microEntreprise.findUnique({
@@ -60,7 +66,7 @@ module.exports.readById = async (req, res) => {
 // Mettre à jour une microentreprise
 module.exports.update = async (req, res) => {
     const { id } = req.params;
-    const { siret, nom, adresse, ville, pays, codePostal } = req.body;
+    const { siret, nom, adresse, ville, pays, codePostal, userIds } = req.body;
     try {
         const microEntreprise = await prisma.microEntreprise.update({
             where: { id },
@@ -71,6 +77,12 @@ module.exports.update = async (req, res) => {
                 ville,
                 pays,
                 codePostal,
+                users: {
+                    set: userIds.map(id => ({ id })),
+                },
+            },
+            include: {
+                users: true,
             },
         });
         res.status(200).send(microEntreprise);
@@ -85,6 +97,9 @@ module.exports.delete = async (req, res) => {
     try {
         const microEntreprise = await prisma.microEntreprise.delete({
             where: { id },
+            include: {
+                users: true,
+            },
         });
         res.status(200).send(microEntreprise);
     } catch (error) {

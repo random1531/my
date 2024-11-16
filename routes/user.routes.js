@@ -5,6 +5,7 @@ const verifyToken = require('../middleware/tokenVerify');
 router.post('/register', UserControllers.register);
 router.post('/login', UserControllers.login);
 router.patch('/update/:id', verifyToken , UserControllers.update);
+router.delete('/delete/:id', verifyToken , UserControllers.delete);
 
 
 module.exports = router;
