@@ -3,7 +3,34 @@ const prisma = new PrismaClient();
 
 // Créer une nouvelle facture
 module.exports.create = async (req, res) => {
-    const { statut, devisNumero, nomClient, ville, rue, pays, numeroRue, sireClientPro, dateDevis, dateEcheance, montantHT, montantTTC, montantTVA, microEntrepriseId, lignes } = req.body;
+    const { 
+        statut, 
+        devisNumero, 
+        nomClient, 
+        ville, 
+        rue, 
+        pays, 
+        numeroRue, 
+        sireClientPro, 
+        dateDevis, 
+        dateEcheance, 
+        montantHT, 
+        montantTTC, 
+        montantTVA, 
+        microEntrepriseId, 
+        lignes 
+    } = req.body;
+
+    // S'assurer que les champs montants sont des nombres
+    const montantHTNum = parseFloat(montantHT);
+    const montantTTCNum = parseFloat(montantTTC);
+    const montantTVANum = parseFloat(montantTVA);
+
+    // Vérifier la validité des montants
+    if (isNaN(montantHTNum) || isNaN(montantTTCNum) || isNaN(montantTVANum)) {
+        return res.status(400).send({ error: "Les montants doivent être des nombres valides." });
+    }
+
     try {
         const facture = await prisma.facture.create({
             data: {
@@ -13,16 +40,16 @@ module.exports.create = async (req, res) => {
                 ville,
                 rue,
                 pays,
-                numeroRue,
+                numeroRue,  // numeroRue est maintenant un String
                 sireClientPro,
-                dateDevis,
-                dateEcheance,
-                montantHT,
-                montantTTC,
-                montantTVA,
+                dateDevis,  // dateDevis doit être un string au format ISO ou autre format valide
+                dateEcheance,  // dateEcheance doit être un string
+                montantHT: montantHTNum,  // Assurez-vous que les montants sont des floats
+                montantTTC: montantTTCNum, 
+                montantTVA: montantTVANum,
                 microEntreprise: { connect: { id: microEntrepriseId } },
                 lignes: {
-                    create: lignes,
+                    create: lignes,  // Créer les lignes de facture (pas encore géré dans cet exemple)
                 },
             },
             include: {
@@ -35,6 +62,8 @@ module.exports.create = async (req, res) => {
         res.status(400).send({ error: error.message });
     }
 };
+
+
 
 // Lire toutes les factures
 module.exports.read = async (req, res) => {

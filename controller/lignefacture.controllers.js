@@ -4,14 +4,21 @@ const prisma = new PrismaClient();
 // Créer une nouvelle ligne de facture
 module.exports.create = async (req, res) => {
     const { intitule, nombre, montantUnit, montantTotal, tva, factureId } = req.body;
+
+    // Convertir les champs en nombres entiers ou flottants si nécessaire
+    const nombreParsed = parseInt(nombre, 10); // Convertir nombre en entier
+    const montantUnitParsed = parseFloat(montantUnit); // Convertir montantUnit en nombre
+    const montantTotalParsed = parseFloat(montantTotal); // Convertir montantTotal en nombre
+    const tvaParsed = parseFloat(tva); // Convertir tva en nombre
+
     try {
         const ligneFacture = await prisma.ligneFacture.create({
             data: {
                 intitule,
-                nombre,
-                montantUnit,
-                montantTotal,
-                tva,
+                nombre: nombreParsed,
+                montantUnit: montantUnitParsed,
+                montantTotal: montantTotalParsed,
+                tva: tvaParsed,
                 facture: { connect: { id: factureId } },
             },
         });

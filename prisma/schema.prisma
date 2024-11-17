@@ -47,10 +47,10 @@ model Facture {
   ville             String
   rue               String
   pays              String
-  numeroRue         Int
+  numeroRue         String
   sireClientPro     String?
-  dateDevis         DateTime
-  dateEcheance      DateTime
+  dateDevis         String
+  dateEcheance      String
   montantHT         Float
   montantTTC        Float
   montantTVA        Float
