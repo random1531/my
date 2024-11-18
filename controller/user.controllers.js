@@ -29,28 +29,42 @@ module.exports.register = async (req, res) => {
 };
 
 module.exports.login = async (req, res) => {
-    const { email, password } = req.body;
-    try {
-      const user = await prisma.user.findUnique({
-        where: { email },
-      });
-      if (!user) return res.status(400).send("Email ou mot de passe incorrect");
-  
-      const validPassword = await bcrypt.compare(password, user.password);
-      if (!validPassword)
-        return res.status(400).send("Email ou mot de passe incorrect");
-  
-      const token = jwt.sign({ id: user.id }, process.env.TOKEN_SECRET, {
-        expiresIn: "1h",
-      });
-  
-      
-      res.status(200).json({ message: "Connecté", token: token });
-    } catch (error) {
-      res.status(500).send({ error: error.message });
-    }
-  };
-  
+  const { email, password } = req.body;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+    if (!user) return res.status(400).send("Email ou mot de passe incorrect");
+
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword)
+      return res.status(400).send("Email ou mot de passe incorrect");
+
+    const token = jwt.sign({ id: user.id }, process.env.TOKEN_SECRET, {
+      expiresIn: "1h",
+    });
+
+    res.status(200).json({
+      message: "Connecté",
+      token: token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        accountType: user.accountType,
+        name: user.name,
+        prenom: user.prenom,
+        adresse: user.adresse,
+        ville: user.ville,
+        pays: user.pays,
+        countmonth: user.countmonth,
+        microentrepriseId: user.microentrepriseId,
+      },
+    });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+};
 
 module.exports.update = async (req, res) => {
   const { id } = req.params;
