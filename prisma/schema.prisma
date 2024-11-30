@@ -50,8 +50,8 @@ model Facture {
   pays              String
   numeroRue         String
   sireClientPro     String?
-  dateDevis         String
-  dateEcheance      String
+  dateDevis         DateTime
+  dateEcheance      DateTime
   montantHT         Float
   montantTTC        Float
   montantTVA        Float
