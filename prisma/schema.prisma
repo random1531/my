@@ -25,6 +25,7 @@ model User {
   microentreprise   MicroEntreprise? @relation(fields: [microentrepriseId], references: [id], name: "UserToMicroEntreprise")
 }
 
+
 model MicroEntreprise {
   id         String     @id @default(uuid())
   siret      String     @unique
