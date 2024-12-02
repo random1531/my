@@ -11,6 +11,14 @@ model User {
   id                 String           @id @default(uuid())
   email              String           @unique
   password           String
+  nom                String?
+  prenom             String?
+  country            String?
+  adresse            String?
+  ville              String?
+  codePostal         String?
+  countDevis         Int              @default(0)
+  Premium            Boolean          @default(false)
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
   microentrepriseId  String?          // clé étrangère pour MicroEntreprise
@@ -20,6 +28,7 @@ model User {
 model MicroEntreprise {
   id         String     @id @default(uuid())
   siret      String     @unique
+  type       String?
   nom        String
   adresse    String
   ville      String
