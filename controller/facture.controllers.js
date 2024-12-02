@@ -40,16 +40,16 @@ module.exports.create = async (req, res) => {
                 ville,
                 rue,
                 pays,
-                numeroRue,  // numeroRue est maintenant un String
+                numeroRue,
                 sireClientPro,
-                dateDevis,  // dateDevis doit être un string au format ISO ou autre format valide
-                dateEcheance,  // dateEcheance doit être un string
-                montantHT: montantHTNum,  // Assurez-vous que les montants sont des floats
-                montantTTC: montantTTCNum, 
+                dateDevis,
+                dateEcheance,
+                montantHT: montantHTNum,
+                montantTTC: montantTTCNum,
                 montantTVA: montantTVANum,
                 microEntreprise: { connect: { id: microEntrepriseId } },
                 lignes: {
-                    create: lignes,  // Créer les lignes de facture (pas encore géré dans cet exemple)
+                    create: lignes,
                 },
             },
             include: {
@@ -62,8 +62,6 @@ module.exports.create = async (req, res) => {
         res.status(400).send({ error: error.message });
     }
 };
-
-
 
 // Lire toutes les factures
 module.exports.read = async (req, res) => {

@@ -8,23 +8,14 @@ datasource db {
 }
 
 model User {
-  id                String           @id @default(uuid())
-  username          String           @unique
-  email             String           @unique
-  password          String
-  accountType       String           @default("user")
-  name              String?
-  prenom            String?
-  adresse           String?
-  ville             String?
-  pays              String?
-  countmonth        Int              @default(0)
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
-  microentrepriseId String?          // clé étrangère pour MicroEntreprise
-  microentreprise   MicroEntreprise? @relation(fields: [microentrepriseId], references: [id], name: "UserToMicroEntreprise")
+  id                 String           @id @default(uuid())
+  email              String           @unique
+  password           String
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  microentrepriseId  String?          // clé étrangère pour MicroEntreprise
+  microentreprise    MicroEntreprise? @relation(fields: [microentrepriseId], references: [id], name: "UserToMicroEntreprise")
 }
-
 
 model MicroEntreprise {
   id         String     @id @default(uuid())
@@ -37,7 +28,7 @@ model MicroEntreprise {
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
   users      User[]     @relation("UserToMicroEntreprise")
-  factures   Facture[]  // relation vers Facture
+  factures   Facture[]
 }
 
 model Facture {
@@ -56,10 +47,10 @@ model Facture {
   montantTTC        Float
   montantTVA        Float
   createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
-  lignes            LigneFacture[]   // relation vers LigneFacture
-  microEntrepriseId String           // clé étrangère pour MicroEntreprise
-  microEntreprise   MicroEntreprise  @relation(fields: [microEntrepriseId], references: [id])
+  updatedAt         DateTime         @default(now())
+  lignes            LigneFacture[]
+  microEntrepriseId String           
+  microEntreprise   MicroEntreprise  @relation(fields: [microEntrepriseId], references: [id], onDelete: Cascade)
 }
 
 model LigneFacture {
@@ -70,5 +61,5 @@ model LigneFacture {
   montantTotal Float
   tva          Float
   factureId    String
-  facture      Facture   @relation(fields: [factureId], references: [id])
+  facture      Facture   @relation(fields: [factureId], references: [id], onDelete: Cascade)
 }
