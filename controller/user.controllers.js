@@ -122,3 +122,20 @@ module.exports.delete = async (req, res) => {
     res.status(500).send({ error: error.message });
   }
 };
+
+
+module.exports.get = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: parseInt(id) },
+    });
+    if (user) {
+      res.status(200).send(user);
+    } else {
+      res.status(404).send({ error: "Utilisateur non trouvé" });
+    }
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+};
