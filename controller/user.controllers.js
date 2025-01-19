@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 module.exports.register = async (req, res) => {
-  const { username, email, password } = req.body;
+  const {  email, password } = req.body;
   try {
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -17,7 +17,7 @@ module.exports.register = async (req, res) => {
 
     const newUser = await prisma.user.create({
       data: {
-        username,
+        
         email,
         password: hashedPassword,
       },
@@ -41,7 +41,7 @@ module.exports.login = async (req, res) => {
       return res.status(400).send("Email ou mot de passe incorrect");
 
     const token = jwt.sign({ id: user.id }, process.env.TOKEN_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "4h",
     });
 
     res.status(200).json({
@@ -128,7 +128,7 @@ module.exports.get = async (req, res) => {
   const { id } = req.params;
   try {
     const user = await prisma.user.findUnique({
-      where: { id: parseInt(id) },
+      where: { id: id },
     });
     if (user) {
       res.status(200).send(user);

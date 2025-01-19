@@ -1,21 +1,20 @@
 -- CreateTable
 CREATE TABLE `User` (
     `id` VARCHAR(191) NOT NULL,
-    `username` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
-    `accountType` VARCHAR(191) NOT NULL DEFAULT 'user',
-    `name` VARCHAR(191) NULL,
+    `nom` VARCHAR(191) NULL,
     `prenom` VARCHAR(191) NULL,
+    `country` VARCHAR(191) NULL,
     `adresse` VARCHAR(191) NULL,
     `ville` VARCHAR(191) NULL,
-    `pays` VARCHAR(191) NULL,
-    `countmonth` INTEGER NOT NULL DEFAULT 0,
+    `codePostal` VARCHAR(191) NULL,
+    `countDevis` INTEGER NOT NULL DEFAULT 0,
+    `Premium` BOOLEAN NOT NULL DEFAULT false,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
     `microentrepriseId` VARCHAR(191) NULL,
 
-    UNIQUE INDEX `User_username_key`(`username`),
     UNIQUE INDEX `User_email_key`(`email`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -24,6 +23,7 @@ CREATE TABLE `User` (
 CREATE TABLE `MicroEntreprise` (
     `id` VARCHAR(191) NOT NULL,
     `siret` VARCHAR(191) NOT NULL,
+    `type` VARCHAR(191) NULL,
     `nom` VARCHAR(191) NOT NULL,
     `adresse` VARCHAR(191) NOT NULL,
     `ville` VARCHAR(191) NOT NULL,
@@ -47,13 +47,13 @@ CREATE TABLE `Facture` (
     `pays` VARCHAR(191) NOT NULL,
     `numeroRue` VARCHAR(191) NOT NULL,
     `sireClientPro` VARCHAR(191) NULL,
-    `dateDevis` VARCHAR(191) NOT NULL,
-    `dateEcheance` VARCHAR(191) NOT NULL,
+    `dateDevis` DATETIME(3) NOT NULL,
+    `dateEcheance` DATETIME(3) NOT NULL,
     `montantHT` DOUBLE NOT NULL,
     `montantTTC` DOUBLE NOT NULL,
     `montantTVA` DOUBLE NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
+    `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `microEntrepriseId` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`id`)
@@ -76,7 +76,7 @@ CREATE TABLE `LigneFacture` (
 ALTER TABLE `User` ADD CONSTRAINT `User_microentrepriseId_fkey` FOREIGN KEY (`microentrepriseId`) REFERENCES `MicroEntreprise`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Facture` ADD CONSTRAINT `Facture_microEntrepriseId_fkey` FOREIGN KEY (`microEntrepriseId`) REFERENCES `MicroEntreprise`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Facture` ADD CONSTRAINT `Facture_microEntrepriseId_fkey` FOREIGN KEY (`microEntrepriseId`) REFERENCES `MicroEntreprise`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `LigneFacture` ADD CONSTRAINT `LigneFacture_factureId_fkey` FOREIGN KEY (`factureId`) REFERENCES `Facture`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `LigneFacture` ADD CONSTRAINT `LigneFacture_factureId_fkey` FOREIGN KEY (`factureId`) REFERENCES `Facture`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
