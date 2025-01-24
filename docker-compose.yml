@@ -1,0 +1,33 @@
+services:
+  backend:
+    build:
+      context: ./ # Le contexte doit inclure votre Dockerfile et wait-for-it.sh
+    ports:
+      - "3500:3500"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=mysql://root:root@mysql:3306/gestion
+    depends_on:
+      - mysql
+    command: ["bash", "/app/wait-for-it.sh", "mysql:3306", "--", "npm", "start"]
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: gestion
+    ports:
+      - "3307:3306"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "--password=root"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  app-network:
+    driver: bridge
